@@ -1,7 +1,31 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageLicenseUrl>https://github.com/paonath/PH.RollingZipRotator.log4net/blob/master/LICENSE</PackageLicenseUrl>
+
+    <PackageId>PH.RollingZipRotatorLog4net</PackageId>
+
+    
+    <Description>A netstandard2.0 Zip utility to perform a very simple log4net file rotation. 
+      The code perform a zip-compression on every log-rotated file and delete it, watching on log4net output directory reading settings of appenders.</Description>
+    <PackageReleaseNotes>
+    </PackageReleaseNotes>
+
+    
+    <PackageTags>log4net,zip,log-rotation,csharp, filesystemwatche</PackageTags>
+
+    <PackageVersion>1.0.0</PackageVersion>
+    <IconUrl>https://raw.githubusercontent.com/paonath/Icons/master/nuget_es_img.png</IconUrl>
+    <Authors>Paolo Innocenti</Authors>
+    <Copyright>Copyright PH 2018 (c) paonath@gmail.com. All rights reserved.</Copyright>
+    <RepositoryUrl>https://github.com/paonath/PH.RollingZipRotator.log4net</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/paonath/PH.RollingZipRotator.log4net</PackageProjectUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/paonath/Icons/master/nuget_es_img.png</PackageIconUrl>
+
   </PropertyGroup>
 
   <ItemGroup>
