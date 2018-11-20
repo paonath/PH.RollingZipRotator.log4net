@@ -1,0 +1,23 @@
+﻿using System.IO;
+
+namespace PH.RollingZipRotatorLog4net
+{
+    internal class InitFile
+    {
+        public FileInfo FileInfo { get; set; }
+        public int DateNum { get; set; }
+
+        public static InitFile GetFile(string path)
+        {
+            System.IO.FileInfo f = new FileInfo(path);
+            if (!f.Exists)
+                return null;
+            
+            var d = f.LastWriteTime;
+
+            int dateNum = int.Parse($"{d:yyyyMMdd}");
+
+            return new InitFile(){ FileInfo = f, DateNum = dateNum};
+        }
+    }
+}
