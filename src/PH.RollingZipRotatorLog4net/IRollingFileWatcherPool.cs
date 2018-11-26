@@ -13,11 +13,12 @@ namespace PH.RollingZipRotatorLog4net
         public string ZipFile { get; set; }
     }
 
+    
 
     /// <summary>
     /// A pool of filesystemwatcher looking for log-rotation
     /// </summary>
-    public interface IRollingFileWatcherPool
+    public interface IRollingFileWatcherPool : IDisposable
     {
         /// <summary>
         /// If disposed
@@ -30,7 +31,7 @@ namespace PH.RollingZipRotatorLog4net
         /// </summary>
         bool Watching { get; }
 
-        void Dispose();
+        //void Dispose();
 
         /// <summary>
         /// Start for watching on log-files rotation.

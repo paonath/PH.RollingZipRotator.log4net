@@ -6,30 +6,20 @@ using log4net.Appender;
 
 namespace PH.RollingZipRotatorLog4net
 {
-    internal class RollingFileWatcherPool : IDisposable, IRollingFileWatcherPool
+    internal class SimpleRollingFileWatcherPool : IDisposable, IRollingFileWatcherPool
     {
+        public bool Disposed { get; protected set; }
+        public bool Watching { get; protected set; }
+
         private readonly List<IRollingFileWatcher> _fileWatchers;
 
-        private readonly TimeSpan _timeSpanZipRotate;
-        private readonly TimeSpan _timeSpanZipArchiveRotate;
-
-        public bool Disposed { get; protected set; }
-        public bool Watching { get; private set; }
-
-        public RollingFileWatcherPool(TimeSpan timeSpanZipRotate, TimeSpan timeSpanZipArchiveRotate)
+        public SimpleRollingFileWatcherPool()
         {
-            if (timeSpanZipRotate > timeSpanZipArchiveRotate)
-                throw new ArgumentException("Log rotation must be smaller than archive rotation",
-                                            nameof(timeSpanZipRotate),
-                                            new ArgumentException("Archive rotation must be greather than log rotation",
-                                                                  nameof(timeSpanZipArchiveRotate)));
-
-            _timeSpanZipRotate        = timeSpanZipRotate;
-            _timeSpanZipArchiveRotate = timeSpanZipArchiveRotate;
-            _fileWatchers             = new List<IRollingFileWatcher>();
-            Disposed                  = false;
-            Watching                  = false;
+            Disposed      = false;
+            Watching      = false;
+            _fileWatchers = new List<IRollingFileWatcher>();
         }
+       
 
         public IRollingFileWatcherPool StartWatch()
         {
@@ -54,8 +44,7 @@ namespace PH.RollingZipRotatorLog4net
                                     var check = _fileWatchers.FirstOrDefault(x => x.DirectoryName == dir.FullName);
                                     if (null == check)
                                     {
-                                        var w = new RollingFileWatcher(path, _timeSpanZipRotate,
-                                                                       _timeSpanZipArchiveRotate);
+                                        var w = new SimpleRollingFileWatcher(path);
                                         w.LogRotated += WOnLogRotated;
                                         w.Watch();
                                         _fileWatchers.Add(w);
@@ -76,11 +65,18 @@ namespace PH.RollingZipRotatorLog4net
             return this;
         }
 
-        public event EventHandler<ZipRotationPerformedEventArgs> LogRotated;
-
         private void WOnLogRotated(object sender, ZipRotationPerformedEventArgs e)
         {
             LogRotated?.Invoke(this, e);
+        }
+
+        public event EventHandler<ZipRotationPerformedEventArgs> LogRotated;
+        
+        
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         protected virtual void Dispose(bool disposing)
@@ -91,15 +87,10 @@ namespace PH.RollingZipRotatorLog4net
                 {
                     rollingFileWatcher?.Dispose();
                 }
+                Watching = false;
             }
 
             Disposed = true;
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
         }
     }
 }

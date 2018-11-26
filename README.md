@@ -12,11 +12,11 @@ The package is available on  [nuget](https://www.nuget.org/packages/PH.RollingZi
 
 ## Code Examples
 
-**Perform a Rotation every 1 minutes and a second archive rotation every 10 min**
+**Perform a Rotation**
 ```c#
 //already configured log4net logger...
 var instance =
-                PH.RollingZipRotatorLog4net.RollingFileFactory.Create(new TimeSpan(0, 1, 0), new TimeSpan(0, 10, 0));
+                PH.RollingZipRotatorLog4net.RollingFileFactory.CreateSimple();
 //remember to star watching!
 instance.StartWatch();
 ```

@@ -16,9 +16,9 @@
     </PackageReleaseNotes>
 
     
-    <PackageTags>log4net,zip,log-rotation,csharp, filesystemwatche</PackageTags>
+    <PackageTags>log4net,zip,log-rotation,csharp, filesystemwatcher</PackageTags>
 
-    <PackageVersion>1.0.0</PackageVersion>
+    <PackageVersion>2.0.0</PackageVersion>
     <IconUrl>https://raw.githubusercontent.com/paonath/Icons/master/nuget_es_img.png</IconUrl>
     <Authors>Paolo Innocenti</Authors>
     <Copyright>Copyright PH 2018 (c) paonath@gmail.com. All rights reserved.</Copyright>
