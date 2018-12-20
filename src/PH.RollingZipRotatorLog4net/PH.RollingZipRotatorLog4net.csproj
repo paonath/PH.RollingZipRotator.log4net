@@ -13,12 +13,13 @@
     <Description>A netstandard2.0 Zip utility to perform a very simple log4net file rotation. 
       The code perform a zip-compression on every log-rotated file and delete it, watching on log4net output directory reading settings of appenders.</Description>
     <PackageReleaseNotes>
+      fix naming entry file
     </PackageReleaseNotes>
 
     
     <PackageTags>log4net,zip,log-rotation,csharp, filesystemwatcher</PackageTags>
 
-    <PackageVersion>2.0.0</PackageVersion>
+    <PackageVersion>2.0.1</PackageVersion>
     <IconUrl>https://raw.githubusercontent.com/paonath/Icons/master/nuget_es_img.png</IconUrl>
     <Authors>Paolo Innocenti</Authors>
     <Copyright>Copyright PH 2018 (c) paonath@gmail.com. All rights reserved.</Copyright>

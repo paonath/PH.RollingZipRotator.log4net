@@ -93,7 +93,7 @@ namespace PH.RollingZipRotatorLog4net
             {
                 var d     = DateTime.Now;
                 var dDay  = $"{d:yyyy-MM-dd}";
-                var dTime = $"{d:hh-mm-ss}";
+                var dTime = $"{d:HH-mm-ss}";
 
                 var outDir = new DirectoryInfo($"{_directory.FullName}{Path.DirectorySeparatorChar}{dDay}");
                 if (!outDir.Exists)

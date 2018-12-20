@@ -5,9 +5,6 @@ The code perform a zip-compression on every log-rotated file and delete it, watc
 log4net output directory reading settings of appenders.
 
 
-On every zip files after first TimeSpan created perform a zip-group.
-On every zip files after second TimeSpan created perform a zip-archive and set archive attribute.
-
 The package is available on  [nuget](https://www.nuget.org/packages/PH.RollingZipRotatorLog4net/) 
 
 ## Code Examples
