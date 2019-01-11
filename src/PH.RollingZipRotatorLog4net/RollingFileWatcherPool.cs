@@ -14,6 +14,7 @@ namespace PH.RollingZipRotatorLog4net
         private readonly TimeSpan _timeSpanZipArchiveRotate;
 
         public bool Disposed { get; protected set; }
+        public bool Debug { get; }
         public bool Watching { get; private set; }
 
         public RollingFileWatcherPool(TimeSpan timeSpanZipRotate, TimeSpan timeSpanZipArchiveRotate)
@@ -74,6 +75,11 @@ namespace PH.RollingZipRotatorLog4net
             
 
             return this;
+        }
+
+        public IRollingFileWatcherPool DebugEnabled(bool value)
+        {
+            throw new NotImplementedException();
         }
 
         public event EventHandler<ZipRotationPerformedEventArgs> LogRotated;

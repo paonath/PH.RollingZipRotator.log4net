@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using log4net;
 using log4net.Appender;
 
 namespace PH.RollingZipRotatorLog4net
@@ -9,9 +10,12 @@ namespace PH.RollingZipRotatorLog4net
     internal class SimpleRollingFileWatcherPool : IDisposable, IRollingFileWatcherPool
     {
         public bool Disposed { get; protected set; }
+        public bool Debug { get; protected set; }
         public bool Watching { get; protected set; }
 
         private readonly List<IRollingFileWatcher> _fileWatchers;
+
+        private ILog _log;
 
         public SimpleRollingFileWatcherPool()
         {
@@ -28,33 +32,30 @@ namespace PH.RollingZipRotatorLog4net
             var repo = log4net.LogManager.GetAllRepositories();
             foreach (var repository in repo)
             {
-                if (null != repository)
+                var appenders = repository?.GetAppenders();
+                if (appenders != null)
                 {
-                    var appenders = repository.GetAppenders();
-                    if (appenders != null)
+                    foreach (var appender in appenders)
                     {
-                        foreach (var appender in appenders)
+                        if (appender is RollingFileAppender r)
                         {
-                            if (appender is RollingFileAppender r)
+                            var path = new FileInfo(r.File);
+                            var dir  = path.Directory;
+                            if (null != dir && dir.Exists)
                             {
-                                var path = new FileInfo(r.File);
-                                var dir  = path.Directory;
-                                if (null != dir && dir.Exists)
+                                var check = _fileWatchers.FirstOrDefault(x => x.DirectoryName == dir.FullName);
+                                if (null == check)
                                 {
-                                    var check = _fileWatchers.FirstOrDefault(x => x.DirectoryName == dir.FullName);
-                                    if (null == check)
-                                    {
-                                        var w = new SimpleRollingFileWatcher(path);
-                                        w.LogRotated += WOnLogRotated;
-                                        w.Watch();
-                                        _fileWatchers.Add(w);
-                                        Watching = true;
-                                    }
-
+                                    var w = new SimpleRollingFileWatcher(path, _log);
+                                    w.LogRotated += WOnLogRotated;
+                                    w.Watch();
+                                    _fileWatchers.Add(w);
+                                    Watching = true;
                                 }
 
-                            
                             }
+
+                            
                         }
                     }
                 }
@@ -65,8 +66,18 @@ namespace PH.RollingZipRotatorLog4net
             return this;
         }
 
+        public IRollingFileWatcherPool DebugEnabled(bool value)
+        {
+            Debug = value;
+            if(Debug == true )
+                _log = LogManager.GetLogger(typeof(SimpleRollingFileWatcherPool));
+            return this;
+        }
+
         private void WOnLogRotated(object sender, ZipRotationPerformedEventArgs e)
         {
+            _log?.Debug($"Log rotated: {e.ZipFile}");
+
             LogRotated?.Invoke(this, e);
         }
 

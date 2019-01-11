@@ -14,6 +14,17 @@ The package is available on  [nuget](https://www.nuget.org/packages/PH.RollingZi
 //already configured log4net logger...
 var instance =
                 PH.RollingZipRotatorLog4net.RollingFileFactory.CreateSimple();
-//remember to star watching!
+//remember to start watching!
+instance.StartWatch();
+```
+
+**Enable Debug Mode**
+```c#
+//already configured log4net logger with Debug level...
+var instance =
+                PH.RollingZipRotatorLog4net.RollingFileFactory.CreateSimple();
+
+instance.DebugEnabled(true);
+//remember to start watching!
 instance.StartWatch();
 ```

@@ -5,21 +5,21 @@
 
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <PackageLicenseUrl>https://github.com/paonath/PH.RollingZipRotator.log4net/blob/master/LICENSE</PackageLicenseUrl>
-
+    
+   
     <PackageId>PH.RollingZipRotatorLog4net</PackageId>
 
     
     <Description>A netstandard2.0 Zip utility to perform a very simple log4net file rotation. 
       The code perform a zip-compression on every log-rotated file and delete it, watching on log4net output directory reading settings of appenders.</Description>
     <PackageReleaseNotes>
-      fix naming entry file
+      add debug mode
     </PackageReleaseNotes>
 
     
     <PackageTags>log4net,zip,log-rotation,csharp, filesystemwatcher</PackageTags>
 
-    <PackageVersion>2.0.1</PackageVersion>
+    <PackageVersion>2.0.2</PackageVersion>
     <IconUrl>https://raw.githubusercontent.com/paonath/Icons/master/nuget_es_img.png</IconUrl>
     <Authors>Paolo Innocenti</Authors>
     <Copyright>Copyright PH 2018 (c) paonath@gmail.com. All rights reserved.</Copyright>
@@ -29,7 +29,13 @@
 
   </PropertyGroup>
 
+  <PropertyGroup>
+    <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
+  </PropertyGroup>
+
+
   <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="2018.2.1" />
     <PackageReference Include="log4net" Version="2.0.8" />
   </ItemGroup>
 

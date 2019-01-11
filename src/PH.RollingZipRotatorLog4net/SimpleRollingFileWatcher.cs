@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using JetBrains.Annotations;
+using log4net;
 
 namespace PH.RollingZipRotatorLog4net
 {
@@ -11,10 +13,13 @@ namespace PH.RollingZipRotatorLog4net
         private readonly DirectoryInfo _directory;
         private FileSystemWatcher _watcher;
         private Queue<string> _zipQueue;
+        private readonly ILog _log;
 
-        public SimpleRollingFileWatcher(FileInfo logFileInfo)
+
+        public SimpleRollingFileWatcher([NotNull] FileInfo logFileInfo, [CanBeNull] ILog log)
         {
             _logFileInfo = logFileInfo;
+            _log = log;
             _directory = logFileInfo.Directory;
             Disposed = false;
         }
@@ -24,6 +29,7 @@ namespace PH.RollingZipRotatorLog4net
         {
             if (disposing && !Disposed)
             {
+                _log?.Debug("Watcher disposing");
                 _watcher?.Dispose();
                 
             }
@@ -55,6 +61,8 @@ namespace PH.RollingZipRotatorLog4net
 
             _watcher.EnableRaisingEvents = true;
 
+            _log?.Debug($"watching on '{_directory.FullName}'");
+
             return this;
         }
 
@@ -78,8 +86,9 @@ namespace PH.RollingZipRotatorLog4net
                 {
                     LogCompress();
                 }
-                catch 
+                catch (Exception exception)
                 {
+                    _log?.Debug($"LogCompress exception '{exception.Message}'", exception);
                     //
                 }
             }
@@ -127,6 +136,7 @@ namespace PH.RollingZipRotatorLog4net
                     zipper.AddEntries(l, zipFile.FullName, mode, CompressionLevel.Optimal);
                     LogRotated?.Invoke(this, new ZipRotationPerformedEventArgs() {ZipFile = zipFile.FullName});
                 }
+
             }
         }
 

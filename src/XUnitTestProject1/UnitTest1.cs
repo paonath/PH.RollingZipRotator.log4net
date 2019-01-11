@@ -65,6 +65,8 @@ namespace XUnitTestProject1
                 rotation++;
             };
 
+            instance.DebugEnabled(true);
+
             instance.StartWatch();
 
             var isInstanceWatching = instance.Watching;

@@ -25,6 +25,8 @@ namespace PH.RollingZipRotatorLog4net
         /// </summary>
         bool Disposed { get; }
 
+        bool Debug { get; }
+
         /// <summary>
         /// if watching for rotation:
         /// remeber to start watching using <see cref="StartWatch"/> method.
@@ -41,6 +43,9 @@ namespace PH.RollingZipRotatorLog4net
         /// </summary>
         /// <returns>instance of watcher pool</returns>
         IRollingFileWatcherPool StartWatch();
+
+        IRollingFileWatcherPool DebugEnabled(bool value);
+
 
         event EventHandler<ZipRotationPerformedEventArgs> LogRotated;
     }
