@@ -22,18 +22,26 @@ namespace PH.RollingZipRotatorLog4net
                         {
                             foreach (var keyValuePair in files)
                             {
-                                if (keyValuePair.Value.Exists)
+                                try
                                 {
-                                    zip.CreateEntryFromFile(keyValuePair.Value.FullName, keyValuePair.Key, level);
-                                    try
+                                    if (keyValuePair.Value.Exists)
                                     {
-                                        System.IO.File.Delete(keyValuePair.Value.FullName);
-                                    }
-                                    catch (Exception e)
-                                    {
-                                        //
+                                        zip.CreateEntryFromFile(keyValuePair.Value.FullName, keyValuePair.Key, level);
+                                        try
+                                        {
+                                            System.IO.File.Delete(keyValuePair.Value.FullName);
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            //
+                                        }
                                     }
                                 }
+                                catch (Exception e)
+                                {
+                                   //
+                                }
+                                
                             }
                     
                         }
@@ -43,7 +51,7 @@ namespace PH.RollingZipRotatorLog4net
 
                 }
             }
-            catch 
+            catch (Exception exception)
             {
                
             }

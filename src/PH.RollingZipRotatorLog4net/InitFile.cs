@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using JetBrains.Annotations;
 
 namespace PH.RollingZipRotatorLog4net
 {
@@ -7,7 +8,8 @@ namespace PH.RollingZipRotatorLog4net
         public FileInfo FileInfo { get; set; }
         public int DateNum { get; set; }
 
-        public static InitFile GetFile(string path)
+        [CanBeNull]
+        public static InitFile GetFile([NotNull] string path)
         {
             System.IO.FileInfo f = new FileInfo(path);
             if (!f.Exists)

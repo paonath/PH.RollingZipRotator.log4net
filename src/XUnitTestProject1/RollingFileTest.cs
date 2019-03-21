@@ -1,42 +1,10 @@
 using System;
 using System.IO;
-using System.Reflection;
-using log4net;
-using log4net.Config;
 using PH.RollingZipRotatorLog4net;
 using Xunit;
 
 namespace XUnitTestProject1
 {
-     public abstract class BaseTest
-    {
-        public void ConfigureL4net()
-        {
-            var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
-            var configFile    = new FileInfo("log4net.config");
-
-            XmlConfigurator.Configure(logRepository, configFile);
-
-            ILog log = LogManager.GetLogger(typeof(BaseTest));
-            log.Info("Init test");
-
-
-        }
-
-        public ILog GetALog()
-        {
-            ConfigureL4net();
-
-            var l = LogManager.GetLogger(typeof(BaseTest));
-
-
-            return l;
-
-        }
-
-
-    }
-
     public class RollingFileTest : BaseTest
     {
         [Fact]
@@ -101,6 +69,30 @@ namespace XUnitTestProject1
 
             Assert.False(isInstanceWatching == true);
 
+        }
+
+        [Fact]
+        public void Starting_Watcher_On_Not_Empty_Di_rPerform_Automatic_Rotation_Over_Other_Files()
+        {
+            var logger = GetALog();
+
+            var dir = new DirectoryInfo(@".\log");
+            for (int i = 0; i < 10; i++)
+            {
+                FileInfo f = new FileInfo($"{dir.FullName}{Path.DirectorySeparatorChar}Fakelog.log.{i}");
+                f.Create();
+                
+            }
+
+
+
+            var instance =
+                PH.RollingZipRotatorLog4net.RollingFileFactory.CreateSimple();
+
+            instance.StartWatch();
+            var isInstanceWatching = instance.Watching;
+            Assert.NotNull(instance);
+            Assert.True((instance as IRollingFileWatcherPool) != null);
         }
     }
     //public class RollingFileTest : BaseTest

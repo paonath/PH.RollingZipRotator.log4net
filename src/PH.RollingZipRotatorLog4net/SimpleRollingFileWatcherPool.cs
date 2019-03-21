@@ -15,6 +15,7 @@ namespace PH.RollingZipRotatorLog4net
 
         private readonly List<IRollingFileWatcher> _fileWatchers;
 
+
         private ILog _log;
 
         public SimpleRollingFileWatcherPool()
@@ -40,13 +41,29 @@ namespace PH.RollingZipRotatorLog4net
                         if (appender is RollingFileAppender r)
                         {
                             var path = new FileInfo(r.File);
+                            
                             var dir  = path.Directory;
                             if (null != dir && dir.Exists)
                             {
+
                                 var check = _fileWatchers.FirstOrDefault(x => x.DirectoryName == dir.FullName);
                                 if (null == check)
                                 {
+                                    var otherFileToCompress = path.Directory?.GetFiles();
+
                                     var w = new SimpleRollingFileWatcher(path, _log);
+
+                                    foreach (var fileInfo in otherFileToCompress)
+                                    {
+                                        if (fileInfo.Exists &&
+                                            !(fileInfo.Extension.Contains("zip") || fileInfo.Extension.Contains("log")))
+                                        {
+                                            w.AddToQueueForRotation(fileInfo);
+                                        }
+                                    }
+
+
+                                    
                                     w.LogRotated += WOnLogRotated;
                                     w.Watch();
                                     _fileWatchers.Add(w);
@@ -61,6 +78,8 @@ namespace PH.RollingZipRotatorLog4net
                 }
             }
 
+
+            
             
 
             return this;

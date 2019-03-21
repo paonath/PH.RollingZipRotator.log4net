@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using JetBrains.Annotations;
 using log4net;
 using log4net.Repository.Hierarchy;
 
@@ -18,8 +19,9 @@ namespace PH.RollingZipRotatorLog4net
         private readonly Queue<string> _zipQueue;
 
         public bool Disposed { get; protected set; }
+        [CanBeNull]
         public string DirectoryName => _directory?.FullName;
-        private FileInfo _logFileInfo;
+        private readonly FileInfo _logFileInfo;
         
         public RollingFileWatcher(FileInfo logFileInfo, TimeSpan timeSpanZipRotate, TimeSpan timeSpanZipArchiveRotate)
         {
