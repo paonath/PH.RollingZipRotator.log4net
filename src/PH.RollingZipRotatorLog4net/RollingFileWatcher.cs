@@ -4,8 +4,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using JetBrains.Annotations;
-using log4net;
-using log4net.Repository.Hierarchy;
+using CompressionLevel = Ionic.Zlib.CompressionLevel;
 
 namespace PH.RollingZipRotatorLog4net
 {
@@ -14,7 +13,7 @@ namespace PH.RollingZipRotatorLog4net
         private readonly DirectoryInfo _directory;
         private readonly TimeSpan _timeSpanZipRotate;
         private readonly TimeSpan _timeSpanZipArchiveRotate;
-        private readonly Zipper _zipper;
+        private readonly INewZipper _zipper;
         private FileSystemWatcher _watcher;
         private readonly Queue<string> _zipQueue;
 
@@ -30,14 +29,16 @@ namespace PH.RollingZipRotatorLog4net
             _timeSpanZipArchiveRotate = timeSpanZipArchiveRotate;
 
             if (_timeSpanZipRotate > _timeSpanZipArchiveRotate)
+            {
                 throw new ArgumentException("Log rotation must be smaller than archive rotation",
                                             nameof(timeSpanZipRotate),
                                             new ArgumentException("Archive rotation must be greather than log rotation",
                                                                   nameof(timeSpanZipArchiveRotate)));
+            }
 
 
             _directory = logFileInfo.Directory;
-            _zipper = new Zipper();
+            _zipper = new NewZipper();
 
             _zipper.LogRotated += ZipperOnLogRotated;
 
@@ -54,7 +55,9 @@ namespace PH.RollingZipRotatorLog4net
         public IRollingFileWatcher Watch()
         {
             if (!_directory.Exists)
+            {
                 _directory.Create();
+            }
 
             _watcher = new FileSystemWatcher(_directory.FullName);
 
@@ -83,17 +86,18 @@ namespace PH.RollingZipRotatorLog4net
             {
                 LogCompressMultipleInitial(files);
             }
-            catch(Exception e)
+            catch
             {
-               
+               //
             }
             
         }
         private void LogCompressMultipleInitial(List<string> filesinitial)
         {
             if(filesinitial.Count == 0)
+            {
                 return;
-
+            }
 
 
             var files = filesinitial.Select(InitFile.GetFile).Where(x => x != null).ToArray();
@@ -121,7 +125,7 @@ namespace PH.RollingZipRotatorLog4net
                             //    }
                             //}
 
-                            _zipper.AddFilesAndDeleteFromDisk(filePerDates, zipArchive, ZipArchiveMode.Create, CompressionLevel.Optimal);
+                            _zipper.AddFilesAndDeleteFromDisk(filePerDates, zipArchive, Ionic.Zlib.CompressionLevel.BestCompression);
 
                             zipToArchiveList.Add(new FileInfo(zipArchive));
                         }
@@ -135,18 +139,8 @@ namespace PH.RollingZipRotatorLog4net
                     var iso = $"{d:O}".Replace(":", "").Replace("T","_").Replace(".", "").Replace("+","");
 
                     var zopArchive = $"{_directory.FullName}{Path.DirectorySeparatorChar}history_archive_logs_{iso}.zip";
-                    //using (var zop = ZipFile.Open(zopArchive, ZipArchiveMode.Create))
-                    //{
-                    //    foreach (var c in zipToArchiveList)
-                    //    {
-                    //        zop.CreateEntryFromFile(c.FullName, c.Name, CompressionLevel.NoCompression);
-                    //        c.Delete();
-                    //    }
-                
-                    //}
-
-                    _zipper.AddFilesAndDeleteFromDisk(zipToArchiveList, zopArchive, ZipArchiveMode.Create,
-                                                      CompressionLevel.NoCompression);
+                    
+                    _zipper.AddFilesAndDeleteFromDisk(zipToArchiveList, zopArchive, Ionic.Zlib.CompressionLevel.None);
             
                     File.SetAttributes(zopArchive, FileAttributes.Archive | FileAttributes.ReadOnly);
 
@@ -171,14 +165,17 @@ namespace PH.RollingZipRotatorLog4net
                 return GetNewZipArchiveNameForRotating(dt, zipArchive, appendNumber);
             }
             else
+            {
                 return n;
-
+            }
         }
 
         private ZipArchiveMode GetModeFromZip(FileInfo zipArchive)
         {
             if (!zipArchive.Exists)
+            {
                 return ZipArchiveMode.Create;
+            }
 
             var creationTime = zipArchive.CreationTime;
             var rotateTime = creationTime.Add(_timeSpanZipRotate);
@@ -203,8 +200,9 @@ namespace PH.RollingZipRotatorLog4net
             {
                 var patternName = _logFileInfo.Name.Replace(_logFileInfo.Extension, "");
                 if(e.Name.Contains(patternName))
+                {
                     _zipQueue.Enqueue(e.FullPath);
-
+                }
             }
                 
             
@@ -220,20 +218,12 @@ namespace PH.RollingZipRotatorLog4net
             var zipArchive = $"{_directory.FullName}{Path.DirectorySeparatorChar}archive_logs_{iso}.zip";
             
             
-            //using (var zop = ZipFile.Open(zipArchive, ZipArchiveMode.Create))
-            //{
-            //    foreach (var c in zipToArchiveArray)
-            //    {
-            //        zop.CreateEntryFromFile(c.FullName, c.Name, CompressionLevel.NoCompression);
-            //        c.Delete();
-            //    }
-                
-            //}
-
-            _zipper.AddFilesAndDeleteFromDisk(zipToArchiveArray.ToList(), zipArchive, ZipArchiveMode.Create, CompressionLevel.NoCompression);
             
 
-            var attrs = System.IO.File.GetAttributes(zipArchive);
+            _zipper.AddFilesAndDeleteFromDisk(zipToArchiveArray.ToList(), zipArchive, Ionic.Zlib.CompressionLevel.None );
+            
+
+            //var attrs = System.IO.File.GetAttributes(zipArchive);
 
 
 
@@ -259,7 +249,6 @@ namespace PH.RollingZipRotatorLog4net
 
                 
 
-                        var zipMode = GetModeFromZip(new FileInfo(zipArchive));
                         Dictionary<string,FileInfo> files = new Dictionary<string, FileInfo>();
                         while (_zipQueue.Count > 0)
                         {
@@ -268,33 +257,13 @@ namespace PH.RollingZipRotatorLog4net
                             if (file.Exists)
                             {
                                 var entryName = $"{iso}__{file.Name}.log";
-                                //zip.CreateEntryFromFile(file.FullName, entryName, CompressionLevel.Optimal);
                                 files.Add(entryName, file);
 
                             }
 
-                            //file.Delete();
                         }
 
-                        _zipper.AddEntries(files, zipArchive, zipMode, CompressionLevel.Optimal);
-
-
-                        //using (var zip = ZipFile.Open(zipArchive, zipMode))
-                        //{
-                        //    while (_zipQueue.Count > 0)
-                        //    {
-                        //        FileInfo file = new FileInfo(_zipQueue.Dequeue());
-
-                        //        if (file.Exists)
-                        //        {
-                        //            var entryName = $"{iso}__{file.Name}.log";
-                        //            zip.CreateEntryFromFile(file.FullName, entryName, CompressionLevel.Optimal);
-
-                        //        }
-
-                        //        file.Delete();
-                        //    }   
-                        //}
+                        _zipper.AddEntries(files, zipArchive, CompressionLevel.BestCompression );
 
 
                     }
@@ -303,7 +272,7 @@ namespace PH.RollingZipRotatorLog4net
                 DateTime archiveParam = DateTime.Now.Subtract(_timeSpanZipArchiveRotate);
 
                 var f = _directory.GetFiles("*.zip")
-                                  .Where(x => x.CreationTime <= archiveParam && !x.Name.StartsWith("archive") ).ToArray();
+                                  .Where(x => x.CreationTime <= archiveParam && !x.Name.StartsWith("archive", StringComparison.InvariantCultureIgnoreCase) ).ToArray();
                 if (f.Length > 0)
                 {
                     lock (myLock)

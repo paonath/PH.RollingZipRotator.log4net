@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using PH.RollingZipRotatorLog4net;
 using Xunit;
@@ -51,7 +50,7 @@ namespace XUnitTestProject1
                 logger.Error(msg);
                 logger.Fatal(msg);
                 logger.Warn(msg);
-                System.Threading.Thread.Sleep(150);
+                //System.Threading.Thread.Sleep(150);
             }
 
             Assert.True(rotation > 0);

@@ -20,10 +20,12 @@ namespace PH.RollingZipRotatorLog4net
         public RollingFileWatcherPool(TimeSpan timeSpanZipRotate, TimeSpan timeSpanZipArchiveRotate)
         {
             if (timeSpanZipRotate > timeSpanZipArchiveRotate)
+            {
                 throw new ArgumentException("Log rotation must be smaller than archive rotation",
                                             nameof(timeSpanZipRotate),
                                             new ArgumentException("Archive rotation must be greather than log rotation",
                                                                   nameof(timeSpanZipArchiveRotate)));
+            }
 
             _timeSpanZipRotate        = timeSpanZipRotate;
             _timeSpanZipArchiveRotate = timeSpanZipArchiveRotate;

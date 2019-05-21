@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using JetBrains.Annotations;
 using log4net;
+using CompressionLevel = Ionic.Zlib.CompressionLevel;
 
 namespace PH.RollingZipRotatorLog4net
 {
@@ -51,7 +51,9 @@ namespace PH.RollingZipRotatorLog4net
         public IRollingFileWatcher Watch()
         {
             if (!_directory.Exists)
+            {
                 _directory.Create();
+            }
 
 
             _watcher = new FileSystemWatcher(_directory.FullName);
@@ -61,7 +63,9 @@ namespace PH.RollingZipRotatorLog4net
 
 
             if(_zipQueue.Count > 0)
+            {
                 LogCompress("Initial compress on start");
+            }
 
             _watcher.EnableRaisingEvents = true;
 
@@ -74,9 +78,14 @@ namespace PH.RollingZipRotatorLog4net
         internal void AddToQueueForRotation([NotNull] FileInfo file)
         {
             if (file is null)
+            {
                 throw new ArgumentNullException(nameof(file));
+            }
+
             if (file.Exists)
+            {
                 _zipQueue.Enqueue(file.FullName);
+            }
         }
 
         private void WatcherOnRenamed(object sender, [NotNull] RenamedEventArgs e)
@@ -85,14 +94,18 @@ namespace PH.RollingZipRotatorLog4net
             {
                 var patternName = _logFileInfo.Name.Replace(_logFileInfo.Extension, "");
                 if (e.Name.Contains(patternName))
+                {
                     _zipQueue.Enqueue(e.FullPath);
+                }
             }
         }
 
         private void WatcherOnCreated(object sender, [NotNull] FileSystemEventArgs e)
         {
             if (!e.FullPath.EndsWith(".zip", StringComparison.InvariantCultureIgnoreCase))
+            {
                 LogCompress();
+            }
         }
 
         private readonly object _lck = new object();
@@ -100,7 +113,9 @@ namespace PH.RollingZipRotatorLog4net
         private void LogCompress([CanBeNull] string message = "")
         {
             if(!string.IsNullOrEmpty(message))
+            {
                 _log?.Debug(message);
+            }
 
             try
             {
@@ -112,15 +127,15 @@ namespace PH.RollingZipRotatorLog4net
 
                     var outDir = new DirectoryInfo($"{_directory.FullName}{Path.DirectorySeparatorChar}{dDay}");
                     if (!outDir.Exists)
+                    {
                         outDir.Create();
+                    }
 
                     var            zipFile = new FileInfo($"{outDir.FullName}{Path.DirectorySeparatorChar}{dDay}.zip");
-                    ZipArchiveMode mode    = ZipArchiveMode.Create;
-                    if (zipFile.Exists)
-                        mode = ZipArchiveMode.Update;
+                    
 
 
-                    var zipper = new Zipper();
+                    var zipper = new NewZipper();
                     var l      = new Dictionary<string, FileInfo>();
 
 
@@ -139,7 +154,7 @@ namespace PH.RollingZipRotatorLog4net
 
                     if (l.Count > 0)
                     {
-                        zipper.AddEntries(l, zipFile.FullName, mode, CompressionLevel.Optimal);
+                        zipper.AddEntries(l, zipFile.FullName, CompressionLevel.BestCompression );
                         LogRotated?.Invoke(this, new ZipRotationPerformedEventArgs() {ZipFile = zipFile.FullName});
                     }
                 }

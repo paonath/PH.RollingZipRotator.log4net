@@ -43,7 +43,7 @@ namespace PH.RollingZipRotatorLog4net
                             var path = new FileInfo(r.File);
                             
                             var dir  = path.Directory;
-                            if (null != dir && dir.Exists)
+                            if (dir?.Exists == true)
                             {
 
                                 var check = _fileWatchers.FirstOrDefault(x => x.DirectoryName == dir.FullName);
@@ -89,7 +89,10 @@ namespace PH.RollingZipRotatorLog4net
         {
             Debug = value;
             if(Debug == true )
+            {
                 _log = LogManager.GetLogger(typeof(SimpleRollingFileWatcherPool));
+            }
+
             return this;
         }
 

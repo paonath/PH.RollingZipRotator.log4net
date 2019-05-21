@@ -13,8 +13,10 @@ namespace PH.RollingZipRotatorLog4net
         {
             System.IO.FileInfo f = new FileInfo(path);
             if (!f.Exists)
+            {
                 return null;
-            
+            }
+
             var d = f.LastWriteTime;
 
             int dateNum = int.Parse($"{d:yyyyMMdd}");
