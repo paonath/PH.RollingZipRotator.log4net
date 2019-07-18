@@ -6,6 +6,10 @@ namespace XUnitTestProject1
 {
     public class RollingFileTest : BaseTest
     {
+
+
+
+
         [Fact]
         public void Factory_Return_NotNullInstance()
         {
@@ -56,6 +60,49 @@ namespace XUnitTestProject1
             Assert.True(rotation > 0);
             Assert.True(isInstanceWatching);
         }
+
+
+        
+        [Fact]
+        public void Perform_A_RotationExcludingSomeAppender()
+        {
+
+            var logger   = GetALog();
+            int rotation = 0;
+
+            var instance =
+                PH.RollingZipRotatorLog4net.RollingFileFactory.CreateSimple("fullLog");
+            
+            instance.LogRotated += (sender, args) =>
+            {
+                rotation++;
+            };
+
+            instance.DebugEnabled(true);
+
+            instance.StartWatch();
+
+            var isInstanceWatching = instance.Watching;
+
+
+            while (rotation < 10)
+            {
+                var msg = "Write some data";
+                logger.Info(msg);
+
+
+                
+                logger.Debug(msg);
+                logger.Error(msg);
+                logger.Fatal(msg);
+                logger.Warn(msg);
+                //System.Threading.Thread.Sleep(150);
+            }
+
+            Assert.True(rotation > 0);
+            Assert.True(isInstanceWatching);
+        }
+
 
         [Fact]
         public void Start_Watcher_WithNoLog_DoNotPerformCode()

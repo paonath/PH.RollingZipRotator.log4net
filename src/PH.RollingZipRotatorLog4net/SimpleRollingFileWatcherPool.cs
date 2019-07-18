@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using JetBrains.Annotations;
 using log4net;
 using log4net.Appender;
 
@@ -14,15 +15,22 @@ namespace PH.RollingZipRotatorLog4net
         public bool Watching { get; protected set; }
 
         private readonly List<IRollingFileWatcher> _fileWatchers;
+        private readonly string[] _appendersToExclude;
 
 
         private ILog _log;
 
-        public SimpleRollingFileWatcherPool()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SimpleRollingFileWatcherPool"/> class.
+        /// </summary>
+        /// <param name="appenderNamesToExclude">The appender names to exclude.</param>
+        public SimpleRollingFileWatcherPool([CanBeNull] IEnumerable<string> appenderNamesToExclude = null)
         {
             Disposed      = false;
             Watching      = false;
             _fileWatchers = new List<IRollingFileWatcher>();
+            _appendersToExclude = appenderNamesToExclude?.ToArray() ?? new string[0];
+
         }
        
 
@@ -33,13 +41,15 @@ namespace PH.RollingZipRotatorLog4net
             var repo = log4net.LogManager.GetAllRepositories();
             foreach (var repository in repo)
             {
-                var appenders = repository?.GetAppenders();
+                var appenders = repository?.GetAppenders().Where(x => !_appendersToExclude.Contains(x.Name)).ToArray();
+
                 if (appenders != null)
                 {
                     foreach (var appender in appenders)
                     {
                         if (appender is RollingFileAppender r)
                         {
+
                             var path = new FileInfo(r.File);
                             
                             var dir  = path.Directory;
@@ -52,15 +62,18 @@ namespace PH.RollingZipRotatorLog4net
                                     var otherFileToCompress = path.Directory?.GetFiles();
 
                                     var w = new SimpleRollingFileWatcher(path, _log);
-
-                                    foreach (var fileInfo in otherFileToCompress)
+                                    if (null != otherFileToCompress)
                                     {
-                                        if (fileInfo.Exists &&
-                                            !(fileInfo.Extension.Contains("zip") || fileInfo.Extension.Contains("log")))
+                                        foreach (var fileInfo in otherFileToCompress)
                                         {
-                                            w.AddToQueueForRotation(fileInfo);
+                                            if (fileInfo.Exists &&
+                                                !(fileInfo.Extension.Contains("zip") || fileInfo.Extension.Contains("log")))
+                                            {
+                                                w.AddToQueueForRotation(fileInfo);
+                                            }
                                         }
                                     }
+                                    
 
 
                                     
@@ -98,7 +111,7 @@ namespace PH.RollingZipRotatorLog4net
 
         private void WOnLogRotated(object sender, ZipRotationPerformedEventArgs e)
         {
-            _log?.Debug($"Log rotated: {e.ZipFile}");
+            _log?.Trace($"Log rotated: {e.ZipFile}");
 
             LogRotated?.Invoke(this, e);
         }

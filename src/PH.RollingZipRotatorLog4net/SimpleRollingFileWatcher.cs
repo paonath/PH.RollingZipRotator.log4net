@@ -14,6 +14,7 @@ namespace PH.RollingZipRotatorLog4net
         private FileSystemWatcher _watcher;
         private readonly Queue<string> _zipQueue;
         private readonly ILog _log;
+        
 
 
         public SimpleRollingFileWatcher([NotNull] FileInfo logFileInfo, [CanBeNull] ILog log)
@@ -30,7 +31,7 @@ namespace PH.RollingZipRotatorLog4net
         {
             if (disposing && !Disposed)
             {
-                _log?.Debug("Watcher disposing");
+                _log?.Trace("Watcher disposing");
                 _watcher?.Dispose();
             }
 
@@ -69,7 +70,7 @@ namespace PH.RollingZipRotatorLog4net
 
             _watcher.EnableRaisingEvents = true;
 
-            _log?.Debug($"watching on '{_directory.FullName}'");
+            _log?.Trace($"watching on '{_directory.FullName}'");
 
             return this;
         }
@@ -114,7 +115,7 @@ namespace PH.RollingZipRotatorLog4net
         {
             if(!string.IsNullOrEmpty(message))
             {
-                _log?.Debug(message);
+                _log?.Trace(message);
             }
 
             try
@@ -161,7 +162,7 @@ namespace PH.RollingZipRotatorLog4net
             }
             catch (Exception exception)
             {
-                _log?.Debug($"LogCompress exception '{exception.Message}'", exception);
+                _log?.Error($"LogCompress exception '{exception.Message}'", exception);
                 //
             }
         }

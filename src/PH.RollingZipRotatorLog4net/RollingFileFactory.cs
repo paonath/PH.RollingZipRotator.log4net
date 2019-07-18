@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace PH.RollingZipRotatorLog4net
 {
@@ -6,9 +7,15 @@ namespace PH.RollingZipRotatorLog4net
     {
         
         [NotNull]
-        public static IRollingFileWatcherPool CreateSimple()
+        public static IRollingFileWatcherPool CreateSimple([CanBeNull] IEnumerable<string> appenderNamesToExclude = null)
         {
-            var r = new SimpleRollingFileWatcherPool();
+            var r = new SimpleRollingFileWatcherPool( appenderNamesToExclude);
+            return r;
+        }
+        [NotNull]
+        public static IRollingFileWatcherPool CreateSimple(string appenderNameToExclude)
+        {
+            var r = new SimpleRollingFileWatcherPool(new string[]{appenderNameToExclude});
             return r;
         }
 
