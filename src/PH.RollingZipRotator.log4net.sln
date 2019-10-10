@@ -1,11 +1,16 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2050
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29403.142
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PH.RollingZipRotatorLog4net", "PH.RollingZipRotatorLog4net\PH.RollingZipRotatorLog4net.csproj", "{341C0F0E-B897-4C12-971D-041A36928AA0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PH.RollingZipRotatorLog4net", "PH.RollingZipRotatorLog4net\PH.RollingZipRotatorLog4net.csproj", "{341C0F0E-B897-4C12-971D-041A36928AA0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XUnitTestProject1", "XUnitTestProject1\XUnitTestProject1.csproj", "{4BCA575C-2DF3-40A0-98F1-C0897267E575}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XUnitTestProject1", "XUnitTestProject1\XUnitTestProject1.csproj", "{4BCA575C-2DF3-40A0-98F1-C0897267E575}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1E91EE98-0B42-474A-BB9F-7F11788D67E6}"
+	ProjectSection(SolutionItems) = preProject
+		PackageBuild.BAT = PackageBuild.BAT
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

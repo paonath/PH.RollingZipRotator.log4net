@@ -33,6 +33,9 @@ namespace XUnitTestProject1
             
             instance.LogRotated += (sender, args) =>
             {
+                var s = sender;
+                var a = args;
+
                 rotation++;
             };
 

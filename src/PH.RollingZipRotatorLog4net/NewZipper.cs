@@ -17,6 +17,10 @@ namespace PH.RollingZipRotatorLog4net
         {
             try
             {
+
+                List<string> entryAdded = new List<string>();
+                List<string> entryDeleted = new List<string>();
+
                 if (files.Count > 0)
                 {
                     lock (_zipLock)
@@ -36,6 +40,8 @@ namespace PH.RollingZipRotatorLog4net
                                         ZipEntry e = izip.AddFile(keyValuePair.Value.FullName);
 
                                         e.FileName = keyValuePair.Key;
+                                        entryAdded.Add(e.FileName);
+
                                         filesToDelete.Add(keyValuePair.Value.FullName);
                                         
                                     }
@@ -56,6 +62,7 @@ namespace PH.RollingZipRotatorLog4net
                             try
                             {
                                 System.IO.File.Delete(fileToDelete);
+                                entryDeleted.Add(fileToDelete);
                             }
                             catch 
                             {
@@ -63,8 +70,9 @@ namespace PH.RollingZipRotatorLog4net
                             }
                         }
                       
-
-                        OnLogRotated(new ZipRotationPerformedEventArgs() {ZipFile = zipArchiveName});
+                        FileInfo ziFileInfo = new FileInfo(zipArchiveName);
+                        
+                        OnLogRotated(new ZipRotationPerformedEventArgs(zipArchiveName, entryAdded, entryDeleted, ziFileInfo.Length) );
                     }
 
                 }

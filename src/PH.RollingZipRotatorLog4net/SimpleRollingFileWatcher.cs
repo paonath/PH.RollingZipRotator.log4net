@@ -137,6 +137,8 @@ namespace PH.RollingZipRotatorLog4net
 
 
                     var zipper = new NewZipper();
+                    zipper.LogRotated += (sender, args) => LogRotated?.Invoke(this, args);
+                    
                     var l      = new Dictionary<string, FileInfo>();
 
 
@@ -156,7 +158,7 @@ namespace PH.RollingZipRotatorLog4net
                     if (l.Count > 0)
                     {
                         zipper.AddEntries(l, zipFile.FullName, CompressionLevel.BestCompression );
-                        LogRotated?.Invoke(this, new ZipRotationPerformedEventArgs() {ZipFile = zipFile.FullName});
+                        //LogRotated?.Invoke(this, new ZipRotationPerformedEventArgs(zipFile.FullName) );
                     }
                 }
             }
