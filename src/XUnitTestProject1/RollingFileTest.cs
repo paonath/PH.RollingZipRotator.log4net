@@ -41,7 +41,7 @@ namespace XUnitTestProject1
 
             instance.DebugEnabled(true);
 
-            instance.StartWatch();
+            instance.StartWatch(@"C:\temp\debug_today");
 
             var isInstanceWatching = instance.Watching;
 

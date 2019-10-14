@@ -14,15 +14,18 @@ namespace PH.RollingZipRotatorLog4net
         private FileSystemWatcher _watcher;
         private readonly Queue<string> _zipQueue;
         private readonly ILog _log;
-        
+
+        private string _zipDirectoryOverridePath;
+        private DirectoryInfo _zipDirectoryOutputPath;
 
 
-        public SimpleRollingFileWatcher([NotNull] FileInfo logFileInfo, [CanBeNull] ILog log)
+        public SimpleRollingFileWatcher([NotNull] FileInfo logFileInfo, [CanBeNull] ILog log, string zipDirectoryOverridePath = "")
         {
             _logFileInfo = logFileInfo;
             _log         = log;
             _directory   = logFileInfo.Directory;
             Disposed     = false;
+            _zipDirectoryOverridePath = zipDirectoryOverridePath;
             _zipQueue    = new Queue<string>();
         }
 
@@ -126,7 +129,22 @@ namespace PH.RollingZipRotatorLog4net
                     var dDay  = $"{d:yyyy-MM-dd}";
                     var dTime = $"{d:HH-mm-ss}";
 
-                    var outDir = new DirectoryInfo($"{_directory.FullName}{Path.DirectorySeparatorChar}{dDay}");
+                    if (!string.IsNullOrEmpty(_zipDirectoryOverridePath))
+                    {
+                        _zipDirectoryOutputPath = new DirectoryInfo(_zipDirectoryOverridePath);
+                        if (!_zipDirectoryOutputPath.Exists)
+                        {
+                            _zipDirectoryOutputPath.Create();
+                        }
+                    }
+                    else
+                    {
+                        _zipDirectoryOutputPath = new DirectoryInfo(_directory.FullName);
+                    }
+
+
+
+                    var outDir = new DirectoryInfo($"{_zipDirectoryOutputPath.FullName}{Path.DirectorySeparatorChar}{dDay}");
                     if (!outDir.Exists)
                     {
                         outDir.Create();

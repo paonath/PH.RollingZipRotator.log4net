@@ -34,10 +34,9 @@ namespace PH.RollingZipRotatorLog4net
         }
        
 
-        public IRollingFileWatcherPool StartWatch()
+        public IRollingFileWatcherPool StartWatch(string newDirectoryPathForZip = "")
         {
             
-
             var repo = log4net.LogManager.GetAllRepositories();
             foreach (var repository in repo)
             {
@@ -61,7 +60,7 @@ namespace PH.RollingZipRotatorLog4net
                                 {
                                     var otherFileToCompress = path.Directory?.GetFiles();
 
-                                    var w = new SimpleRollingFileWatcher(path, _log);
+                                    var w = new SimpleRollingFileWatcher(path, _log, newDirectoryPathForZip);
                                     if (null != otherFileToCompress)
                                     {
                                         foreach (var fileInfo in otherFileToCompress)

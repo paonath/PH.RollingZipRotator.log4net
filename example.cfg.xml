@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<RollingFileWatcherConfig debug="true" overrideDirectoryPathForZip="C:\temp\">
+  <appenderNamesToExclude>fullLog</appenderNamesToExclude>
+</RollingFileWatcherConfig>
