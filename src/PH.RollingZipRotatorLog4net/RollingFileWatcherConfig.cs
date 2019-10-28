@@ -36,24 +36,30 @@ namespace PH.RollingZipRotatorLog4net
 
         }
 
-        public static RollingFileWatcherConfig ReadFromFile(string filePath)
+        private static RollingFileWatcherConfig ReadFromFileInfo(FileInfo fileConfig)
         {
-            FileInfo fi = new FileInfo(filePath);
-            if (!fi.Exists)
+            if (!fileConfig.Exists)
             {
-                return null;
+                throw new ArgumentException($"File '{fileConfig.FullName}' does not exists", nameof(fileConfig));
             }
 
-            XmlSerializer     serializer = new XmlSerializer(typeof(RollingFileWatcherConfig));
-            XmlWriterSettings settings   = new XmlWriterSettings {Indent = true, OmitXmlDeclaration = true};
-            XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+            XmlSerializer           serializer = new XmlSerializer(typeof(RollingFileWatcherConfig));
+            XmlWriterSettings       settings   = new XmlWriterSettings {Indent = true, OmitXmlDeclaration = true};
+            XmlSerializerNamespaces ns         = new XmlSerializerNamespaces();
             ns.Add("","");
 
-            using (var f = new FileStream(filePath, FileMode.Open))
+            using (var f = new FileStream(fileConfig.FullName, FileMode.Open))
             {
                 var cfg = (RollingFileWatcherConfig) serializer.Deserialize(f);
                 return cfg;
             }
+        }
+
+        public static RollingFileWatcherConfig ReadFromFile(string filePath)
+        {
+            FileInfo fi = new FileInfo(filePath);
+            return ReadFromFileInfo(fi);
+
         }
     }
 }
