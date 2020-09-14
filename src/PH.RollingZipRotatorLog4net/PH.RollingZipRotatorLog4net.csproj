@@ -10,18 +10,23 @@
     <PackageId>PH.RollingZipRotatorLog4net</PackageId>
 
     
-    <Description>A netstandard2.0 Zip utility to perform a very simple log4net file rotation. 
+    <Description>
+      A netstandard2.0 Zip utility to perform a very simple log4net file rotation. 
       The code perform a zip-compression on every log-rotated file and delete it, watching on log4net output directory reading settings of appenders.
     </Description>
     
+    <PackageReleaseNotes>
+      New Version for log4net 2.0.10
+    </PackageReleaseNotes>
+
 
     
     <PackageTags>log4net,zip,log-rotation,csharp, filesystemwatcher</PackageTags>
 
-    <PackageVersion>2.0.8</PackageVersion>
+    <PackageVersion>2.0.10</PackageVersion>
     
     <Authors>Paolo Innocenti</Authors>
-    <Copyright>Copyright PH 2018 (c) paonath@gmail.com. All rights reserved.</Copyright>
+    <Copyright>Copyright PH 2020 (c) paonath@gmail.com. All rights reserved.</Copyright>
     <RepositoryUrl>https://github.com/paonath/PH.RollingZipRotator.log4net</RepositoryUrl>
     <PackageProjectUrl>https://github.com/paonath/PH.RollingZipRotator.log4net</PackageProjectUrl>
     
@@ -39,7 +44,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
-    <SourceRevisionId>build-$([System.DateTime]::UtcNow.ToString("yyyyMMdd"))</SourceRevisionId>
+    <SourceRevisionId>rel-$([System.DateTime]::UtcNow.ToString("yyyyMMdd"))</SourceRevisionId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -52,9 +57,10 @@
 
 
   <ItemGroup>
-    <PackageReference Include="DotNetZip" Version="1.13.3" />
-    <PackageReference Include="JetBrains.Annotations" Version="2019.1.1" />
-    <PackageReference Include="log4net" Version="2.0.8" />
+    <PackageReference Include="DotNetZip" Version="1.13.8" />
+    <PackageReference Include="JetBrains.Annotations" Version="2020.1.0" />
+    <PackageReference Include="log4net" Version="2.0.10" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>
