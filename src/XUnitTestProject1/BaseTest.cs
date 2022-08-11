@@ -1,5 +1,7 @@
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Text;
 using log4net;
 using log4net.Config;
 
@@ -31,6 +33,26 @@ namespace XUnitTestProject1
 
         }
 
+
+        public string ProvideFile(string filePath, [CallerMemberName] string memberName = "")
+        {
+	        FileInfo f = new FileInfo(filePath);
+	        if (!f.Exists)
+	        {
+		        StringBuilder builder = new StringBuilder();
+		        builder.AppendLine($"Demo File for {memberName} : {DateTime.Now:O} - ");
+		        
+		        for (int i = 0; i < 100; i++)
+		        {
+			        builder.AppendLine($"just demo {i}");
+		        }
+
+            System.IO.File.WriteAllText(f.FullName,builder.ToString());
+	        }
+
+	        return f.FullName;
+
+        }
 
     }
 }

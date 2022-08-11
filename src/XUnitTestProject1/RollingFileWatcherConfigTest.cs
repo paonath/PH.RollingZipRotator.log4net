@@ -16,7 +16,7 @@ namespace XUnitTestProject1
                 AppenderNamesToExclude = new []{"fullLog"}
             };
 
-            cfg.SaveToFile(@"C:\temp\cfg.config");
+            cfg.SaveToFile($@"C:\temp\cfg-{Guid.NewGuid():N}.config");
 
 
 
