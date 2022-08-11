@@ -9,7 +9,7 @@ namespace XUnitTestProject1
         public void Test01()
         {
 
-            var filename = @"c:\temp\soffas-fms-uploadftp-sql.log";
+            var filename = ProvideFile(@"c:\temp\soffas-fms-uploadftp-sql.log");
 
 
             using(ZipFile zip= new ZipFile())
@@ -24,8 +24,8 @@ namespace XUnitTestProject1
         public void Test02()
         {
 
-            var filename = @"c:\temp\p1maintenance-sql.log";
-            var zipFile = @".\test01.zip";
+            var filename = ProvideFile(@"c:\temp\p1maintenance-sql.log");
+            var zipFile  = @".\test01.zip";
 
 
 

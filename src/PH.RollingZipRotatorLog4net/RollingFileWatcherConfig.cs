@@ -7,59 +7,92 @@ using System.Xml.Serialization;
 
 namespace PH.RollingZipRotatorLog4net
 {
-    
-    public class RollingFileWatcherConfig
-    {
-        [XmlAttribute("debug")]
-        public bool DebugEnabled { get; set; } = false;
+	/// <summary>
+	/// 
+	/// </summary>
+	public class RollingFileWatcherConfig
+	{
+		/// <summary>
+		/// Gets or sets a value indicating whether [debug enabled].
+		/// </summary>
+		/// <value>
+		///   <c>true</c> if [debug enabled]; otherwise, <c>false</c>.
+		/// </value>
+		[XmlAttribute("debug")]
+		public bool DebugEnabled { get; set; } = false;
 
-        [XmlAttribute("overrideDirectoryPathForZip")]
-        public string OverrideDirectoryPathForZip { get; set; } = "";
+		/// <summary>
+		/// Gets or sets the override directory path for zip.
+		/// </summary>
+		/// <value>
+		/// The override directory path for zip.
+		/// </value>
+		[XmlAttribute("overrideDirectoryPathForZip")]
+		public string OverrideDirectoryPathForZip { get; set; } = "";
 
-        [XmlElement("appenderNamesToExclude")]
-        public string[] AppenderNamesToExclude { get; set; } = null;
-
-
-
-        public void SaveToFile(string filePath)
-        {
-            XmlSerializer     serializer = new XmlSerializer(typeof(RollingFileWatcherConfig));
-            XmlWriterSettings settings = new XmlWriterSettings {Indent = true, OmitXmlDeclaration = true};
-
-            XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
-            ns.Add("","");
-            using (var f = new FileStream(filePath, FileMode.CreateNew))
-            {
-                serializer.Serialize(f, this, ns);
-            }
+		/// <summary>
+		/// Gets or sets the appender names to exclude.
+		/// </summary>
+		/// <value>
+		/// The appender names to exclude.
+		/// </value>
+		[XmlElement("appenderNamesToExclude")]
+		public string[] AppenderNamesToExclude { get; set; } = null;
 
 
-        }
+		/// <summary>
+		/// Saves to file.
+		/// </summary>
+		/// <param name="filePath">The file path.</param>
+		/// <exception cref="System.ArgumentException">File '{filePath}' already exists!</exception>
+		public void SaveToFile(string filePath)
+		{
+			var fi = new FileInfo(filePath);
+			if (fi.Exists)
+			{
+				throw new ArgumentException($"File '{filePath}' already exists!", filePath);
+			}
 
-        private static RollingFileWatcherConfig ReadFromFileInfo(FileInfo fileConfig)
-        {
-            if (!fileConfig.Exists)
-            {
-                throw new ArgumentException($"File '{fileConfig.FullName}' does not exists", nameof(fileConfig));
-            }
+			var serializer = new XmlSerializer(typeof(RollingFileWatcherConfig));
+			var settings   = new XmlWriterSettings { Indent = true, OmitXmlDeclaration = true };
 
-            XmlSerializer           serializer = new XmlSerializer(typeof(RollingFileWatcherConfig));
-            XmlWriterSettings       settings   = new XmlWriterSettings {Indent = true, OmitXmlDeclaration = true};
-            XmlSerializerNamespaces ns         = new XmlSerializerNamespaces();
-            ns.Add("","");
+			var ns = new XmlSerializerNamespaces();
+			ns.Add("", "");
 
-            using (var f = new FileStream(fileConfig.FullName, FileMode.Open))
-            {
-                var cfg = (RollingFileWatcherConfig) serializer.Deserialize(f);
-                return cfg;
-            }
-        }
+			using (var f = new FileStream(filePath, FileMode.CreateNew))
+			{
+				serializer.Serialize(f, this, ns);
+			}
+		}
 
-        public static RollingFileWatcherConfig ReadFromFile(string filePath)
-        {
-            FileInfo fi = new FileInfo(filePath);
-            return ReadFromFileInfo(fi);
+		private static RollingFileWatcherConfig ReadFromFileInfo(FileInfo fileConfig)
+		{
+			if (!fileConfig.Exists)
+			{
+				throw new ArgumentException($"File '{fileConfig.FullName}' does not exists", nameof(fileConfig));
+			}
 
-        }
-    }
+			var serializer = new XmlSerializer(typeof(RollingFileWatcherConfig));
+			var settings   = new XmlWriterSettings { Indent = true, OmitXmlDeclaration = true };
+			var ns         = new XmlSerializerNamespaces();
+			ns.Add("", "");
+
+			using (var f = new FileStream(fileConfig.FullName, FileMode.Open))
+			{
+				var cfg = (RollingFileWatcherConfig)serializer.Deserialize(f);
+				return cfg;
+			}
+		}
+
+		/// <summary>
+		/// Reads from file.
+		/// </summary>
+		/// <param name="filePath">The file path.</param>
+		/// <returns></returns>
+		public static RollingFileWatcherConfig ReadFromFile(string filePath)
+		{
+			var fi = new FileInfo(filePath);
+			return ReadFromFileInfo(fi);
+		}
+	}
 }

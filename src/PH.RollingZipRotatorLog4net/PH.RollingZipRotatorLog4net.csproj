@@ -16,7 +16,7 @@
     </Description>
     
     <PackageReleaseNotes>
-      New Version for log4net 2.0.10
+      New Version for log4net 2.0.15 and DotNetZip 1.16.0
     </PackageReleaseNotes>
 
 
@@ -33,6 +33,7 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
 
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -57,10 +58,11 @@
 
 
   <ItemGroup>
-    <PackageReference Include="DotNetZip" Version="1.13.8" />
-    <PackageReference Include="JetBrains.Annotations" Version="2020.1.0" />
-    <PackageReference Include="log4net" Version="2.0.10" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+    <PackageReference Include="DotNetZip" Version="1.16.0" />
+    <PackageReference Include="GitInfo" Version="2.2.0" />
+    <PackageReference Include="JetBrains.Annotations" Version="2022.1.0" />
+    <PackageReference Include="log4net" Version="2.0.15" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>
