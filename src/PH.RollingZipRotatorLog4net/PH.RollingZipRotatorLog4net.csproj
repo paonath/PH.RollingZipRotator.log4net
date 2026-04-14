@@ -61,7 +61,7 @@
     <PackageReference Include="DotNetZip" Version="1.16.0" />
     <PackageReference Include="GitInfo" Version="2.2.0" />
     <PackageReference Include="JetBrains.Annotations" Version="2022.1.0" />
-    <PackageReference Include="log4net" Version="2.0.15" />
+    <PackageReference Include="log4net" Version="3.3.0" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
   </ItemGroup>
 
